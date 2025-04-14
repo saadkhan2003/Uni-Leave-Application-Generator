@@ -572,6 +572,15 @@ function generateApplication() {
     // Apply styling
     updatePreviewStyle();
     updatePaperStyle();
+    
+    // Show dialog if we're on the form tab
+    const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+    if (activeTab === 'form') {
+        if (confirm('Application generated successfully! Would you like to go to the preview page to download it?')) {
+            // Switch to preview tab
+            document.querySelector('.tab-btn[data-tab="preview"]').click();
+        }
+    }
 }
 
 /**
