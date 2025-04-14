@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Leave Application Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Caveat&family=Dancing+Script&family=Indie+Flower&family=Pacifico&family=Kalam&family=Just+Me+Again+Down+Here&family=Gloria+Hallelujah&family=Patrick+Hand&family=Architects+Daughter&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>University Leave Application Generator</h1>
+            <p>Create professional handwritten-style leave applications</p>
+        </header>
+
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="form">Application Form</button>
+                <button class="tab-btn" data-tab="preview">Preview</button>
+                <button class="tab-btn" data-tab="settings">Settings</button>
+            </div>
+
+            <div class="tab-content">
+                <!-- Form Tab -->
+                <div class="tab-pane active" id="form">
+                    <form id="application-form">
+                        <h2>Application Details</h2>
+                        
+                        <div class="form-group">
+                            <label for="template">Application Type:</label>
+                            <select id="template" name="template">
+                                <option value="urgent">Urgent Piece of Work</option>
+                                <option value="sick">Sick Leave</option>
+                                <option value="emergency">Family Emergency</option>
+                                <option value="event">Event Participation</option>
+                                <option value="custom">Custom Reason</option>
+                                <option value="fullCustom">Completely Custom Text</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="studentName">Full Name:</label>
+                            <input type="text" id="studentName" name="studentName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rollNumber">Roll Number:</label>
+                            <input type="text" id="rollNumber" name="rollNumber" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="department">Department:</label>
+                            <select id="department" name="department">
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Electrical Engineering">Electrical Engineering</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Business Administration">Business Administration</option>
+                                <option value="Social Sciences">Social Sciences</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Physics">Physics</option>
+                                <option value="Chemistry">Chemistry</option>
+                                <option value="Biology">Biology</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="applicationDate">Application Date:</label>
+                            <input type="date" id="applicationDate" name="applicationDate" required>
+                        </div>
+
+                        <!-- Template specific fields - Urgent Work -->
+                        <div class="template-fields" id="urgent-fields">
+                            <div class="form-group">
+                                <label for="urgentDays">Number of Days:</label>
+                                <input type="number" id="urgentDays" name="urgentDays" min="1" max="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="urgentDetails">Work Details:</label>
+                                <textarea id="urgentDetails" name="urgentDetails" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Template specific fields - Sick Leave -->
+                        <div class="template-fields" id="sick-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="sickFromDate">From Date:</label>
+                                <input type="date" id="sickFromDate" name="sickFromDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="sickToDate">To Date:</label>
+                                <input type="date" id="sickToDate" name="sickToDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="sickReason">Medical Reason:</label>
+                                <textarea id="sickReason" name="sickReason" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Template specific fields - Family Emergency -->
+                        <div class="template-fields" id="emergency-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="emergencyDays">Number of Days:</label>
+                                <input type="number" id="emergencyDays" name="emergencyDays" min="1" max="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="emergencyDetails">Emergency Details:</label>
+                                <textarea id="emergencyDetails" name="emergencyDetails" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Template specific fields - Event Participation -->
+                        <div class="template-fields" id="event-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="eventName">Event Name:</label>
+                                <input type="text" id="eventName" name="eventName">
+                            </div>
+                            <div class="form-group">
+                                <label for="eventFromDate">From Date:</label>
+                                <input type="date" id="eventFromDate" name="eventFromDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="eventToDate">To Date:</label>
+                                <input type="date" id="eventToDate" name="eventToDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="eventDetails">Event Details:</label>
+                                <textarea id="eventDetails" name="eventDetails" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Template specific fields - Custom Reason -->
+                        <div class="template-fields" id="custom-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="customDays">Number of Days:</label>
+                                <input type="number" id="customDays" name="customDays" min="1" max="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="customReason">Your Reason:</label>
+                                <textarea id="customReason" name="customReason" rows="5"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Template specific fields - Full Custom Text -->
+                        <div class="template-fields" id="fullCustom-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="customSubject">Subject:</label>
+                                <input type="text" id="customSubject" name="customSubject" placeholder="Enter your application subject">
+                            </div>
+                            <div class="form-group">
+                                <label for="fullCustomText">Write Your Own Application Text:</label>
+                                <p class="hint">Write your complete application text below. The header and signature will be added automatically.</p>
+                                <textarea id="fullCustomText" name="fullCustomText" rows="15" placeholder="With due respect I beg to say that..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signature">Your Signature:</label>
+                            <div class="signature-container">
+                                <canvas id="signature-pad"></canvas>
+                                <div class="signature-btns">
+                                    <button type="button" id="clear-signature">Clear</button>
+                                    <label for="upload-signature" class="upload-btn">Upload</label>
+                                    <input type="file" id="upload-signature" accept="image/*" style="display:none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-buttons">
+                            <button type="button" id="generate-btn">Generate Application</button>
+                            <button type="button" id="save-data">Save Details</button>
+                            <button type="button" id="clear-data">Clear All</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Preview Tab -->
+                <div class="tab-pane" id="preview">
+                    <div class="preview-container">
+                        <div class="preview-controls">
+                            <button id="print-btn">Print</button>
+                            <button id="download-pdf">Save as PDF</button>
+                        </div>
+                        <div id="application-preview" class="paper">
+                            <div id="application-content"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-pane" id="settings">
+                    <div class="settings-container">
+                        <h2>Application Settings</h2>
+                        
+                        <div class="setting-group">
+                            <h3>Handwriting Style</h3>
+                            <div class="font-options">
+                                <button class="font-option" data-font="'Homemade Apple', cursive">
+                                    <span style="font-family: 'Homemade Apple', cursive;">Aa</span>
+                                </button>
+                                <button class="font-option" data-font="'Caveat', cursive">
+                                    <span style="font-family: 'Caveat', cursive;">Aa</span>
+                                </button>
+                                <button class="font-option" data-font="'Dancing Script', cursive">
+                                    <span style="font-family: 'Dancing Script', cursive;">Aa</span>
+                                </button>
+                                <button class="font-option" data-font="'Indie Flower', cursive">
+                                    <span style="font-family: 'Indie Flower', cursive;">Aa</span>
+                                </button>
+                                <button class="font-option" data-font="'Kalam', cursive">
+                                    <span style="font-family: 'Kalam', cursive;">Aa</span>
+                                </button>
+                                <button class="font-option" data-font="'Just Me Again Down Here', cursive">
+                                    <span style="font-family: 'Just Me Again Down Here', cursive;">Aa</span>
+                                </button>
+                                <button class="font-option" data-font="'Gloria Hallelujah', cursive">
+                                    <span style="font-family: 'Gloria Hallelujah', cursive;">Aa</span>
+                                </button>
+                                <button class="font-option" data-font="'Patrick Hand', cursive">
+                                    <span style="font-family: 'Patrick Hand', cursive;">Aa</span>
+                                </button>
+                                <button class="font-option" data-font="'Architects Daughter', cursive">
+                                    <span style="font-family: 'Architects Daughter', cursive;">Aa</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Ink Color</h3>
+                            <div class="color-picker">
+                                <button class="color-option" data-color="#000000" style="background-color: #000000;"></button>
+                                <button class="color-option" data-color="#0000FF" style="background-color: #0000FF;"></button>
+                                <button class="color-option" data-color="#006400" style="background-color: #006400;"></button>
+                                <button class="color-option" data-color="#8B0000" style="background-color: #8B0000;"></button>
+                                <button class="color-option" data-color="#4B0082" style="background-color: #4B0082;"></button>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Paper Style</h3>
+                            <div class="paper-options">
+                                <label>
+                                    <input type="checkbox" id="toggle-lines"> Show Ruled Lines
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="toggle-aged"> Aged Paper Effect
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h3>Default Information</h3>
+                            <form id="default-info-form">
+                                <div class="form-group">
+                                    <label for="default-name">Default Name:</label>
+                                    <input type="text" id="default-name" name="default-name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="default-roll">Default Roll Number:</label>
+                                    <input type="text" id="default-roll" name="default-roll">
+                                </div>
+                                <div class="form-group">
+                                    <label for="default-department">Default Department:</label>
+                                    <select id="default-department" name="default-department">
+                                        <option value="">Select Department</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Electrical Engineering">Electrical Engineering</option>
+                                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                        <option value="Business Administration">Business Administration</option>
+                                        <option value="Social Sciences">Social Sciences</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Biology">Biology</option>
+                                    </select>
+                                </div>
+                                <button type="button" id="save-defaults">Save Defaults</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 University Leave Application Generator | Created by Muhammad Saad Khan Batch 10<sup>th</sup></p>
+    </footer>
+
+    <script src="jspdf.min.js"></script>
+    <script src="html2canvas.min.js"></script>
+    <script src="signature_pad.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
