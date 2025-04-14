@@ -451,3 +451,38 @@ footer {
     min-height: 250px;
     font-family: inherit;
 }
+
+/* Credits Section Styling */
+.credits-section {
+    background-color: #f9f9f9;
+}
+
+.credits-content {
+    line-height: 1.8;
+}
+
+.developer-info {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.social-link {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.social-link:hover {
+    background-color: var(--secondary-color);
+}
