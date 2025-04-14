@@ -68,6 +68,21 @@ function initTabs() {
             // If switching to preview tab, generate application
             if (targetTab === 'preview') {
                 generateApplication();
+                
+                // Add desktop view toggle on mobile devices
+                if (window.innerWidth <= 768 && !document.querySelector('.preview-mode-toggle')) {
+                    const previewContainer = document.querySelector('.preview-container');
+                    const toggleDiv = document.createElement('div');
+                    toggleDiv.className = 'preview-mode-toggle';
+                    
+                    const toggleButton = document.createElement('button');
+                    toggleButton.id = 'toggle-preview-mode';
+                    toggleButton.textContent = 'Toggle Desktop View';
+                    toggleButton.addEventListener('click', togglePreviewMode);
+                    
+                    toggleDiv.appendChild(toggleButton);
+                    previewContainer.insertBefore(toggleDiv, previewContainer.firstChild);
+                }
             }
             
             // Resize signature pad on tab change (fixes canvas sizing issues)
@@ -76,6 +91,21 @@ function initTabs() {
             }
         });
     });
+}
+
+/**
+ * Toggles between mobile and desktop view modes for preview
+ */
+function togglePreviewMode() {
+    const previewContainer = document.querySelector('.preview-container');
+    previewContainer.classList.toggle('desktop-view');
+    
+    const toggleButton = document.getElementById('toggle-preview-mode');
+    if (previewContainer.classList.contains('desktop-view')) {
+        toggleButton.textContent = 'Switch to Mobile View';
+    } else {
+        toggleButton.textContent = 'Switch to Desktop View';
+    }
 }
 
 /**
@@ -726,12 +756,31 @@ function downloadAsPDF() {
     // Get the application preview element
     const element = document.getElementById('application-preview');
     
+    // Temporarily modify the paper size for consistent capture regardless of device
+    const originalStyle = element.getAttribute('style') || '';
+    
+    // Force A4 proportions and larger size for better quality
+    element.setAttribute('style', 
+        'width: 800px !important; min-height: 1130px !important; padding: 60px !important; ' + 
+        'margin: 0 !important; position: absolute; left: -9999px; top: 0;'
+    );
+    
+    // Ensure preview content has consistent styling
+    const content = document.getElementById('application-content');
+    const originalContentStyle = content.getAttribute('style') || '';
+    content.setAttribute('style', 
+        'font-family: ' + currentFont + '; color: ' + currentColor + '; ' +
+        'font-size: 26px !important; line-height: 1.8; height: 75%;'
+    );
+    
     // Use html2canvas to convert the application to an image
     html2canvas(element, {
         scale: 2, // Higher scale for better quality
         logging: false,
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        windowWidth: 1200, // Force desktop-like rendering
+        windowHeight: 1697 // A4 height equivalent
     }).then(canvas => {
         // Create PDF using jsPDF
         const pdf = new jspdf.jsPDF({
@@ -774,6 +823,14 @@ function downloadAsPDF() {
         // Reset button
         downloadBtn.textContent = originalText;
         downloadBtn.disabled = false;
+        
+        // Restore original styles
+        element.setAttribute('style', originalStyle);
+        content.setAttribute('style', originalContentStyle);
+        
+        // Reapply current settings to ensure consistency
+        updatePreviewStyle();
+        updatePaperStyle();
     }).catch(error => {
         console.error('Error generating PDF:', error);
         alert('An error occurred while generating the PDF. Please try again.');
@@ -781,6 +838,10 @@ function downloadAsPDF() {
         // Reset button
         downloadBtn.textContent = originalText;
         downloadBtn.disabled = false;
+        
+        // Restore original styles
+        element.setAttribute('style', originalStyle);
+        content.setAttribute('style', originalContentStyle);
     });
 }
 

@@ -239,6 +239,9 @@ textarea {
     position: relative;
     border-radius: 2px;
     margin-bottom: 30px;
+    /* Ensuring consistent scaling on mobile */
+    box-sizing: border-box;
+    transition: none;
 }
 
 .paper.lined {
@@ -255,7 +258,7 @@ textarea {
     font-family: var(--handwriting-font);
     color: var(--handwriting-color);
     line-height: 1.8;
-    font-size: 22px; /* Increased font size from 18px to 22px */
+    font-size: 22px; /* Base font size */
     height: 75%;
     display: flex;
     flex-direction: column;
@@ -498,6 +501,35 @@ footer {
     
     .social-link {
         text-align: center;
+    }
+
+    .preview-container.desktop-view .paper {
+        /* When in desktop view mode on mobile */
+        transform-origin: top left;
+        transform: scale(0.65);
+        margin: 0 auto;
+        width: 120%;
+        min-height: 1130px;
+        padding: 60px;
+        margin-left: -10%;
+    }
+    
+    /* Add a toggle button for desktop/mobile view */
+    .preview-mode-toggle {
+        display: block;
+        margin-bottom: 10px;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .preview-mode-toggle button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
     }
 }
 
