@@ -2,7 +2,7 @@
  * University Leave Application Generator
  * 
  * This script handles all the functionality for the leave application generator,
- * including form handling, template generation, signature pad, and local storage.
+ * including form handling, template generation, signature pad, local storage, and event tracking.
  */
 
 // Global Variables
@@ -11,6 +11,22 @@ let currentFont = "'Kalam', cursive"; // Default handwriting font (fifth font op
 let currentColor = "#000000"; // Default ink color
 let hasRuledLines = false; // Default paper style - no lines
 let hasAgedEffect = false; // Default paper style - not aged
+
+/**
+ * Track usage events
+ * @param {string} category - Event category
+ * @param {string} action - Action performed
+ * @param {string} label - Label for the event (optional)
+ */
+function trackEvent(category, action, label = null) {
+    if (typeof gtag === 'function') {
+        const eventParams = {
+            event_category: category,
+            event_label: label
+        };
+        gtag('event', action, eventParams);
+    }
+}
 
 // Initialize the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -32,16 +48,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set Default Date
     setDefaultDate();
     
-    // Initialize Generate Button
-    document.getElementById('generate-btn').addEventListener('click', generateApplication);
+    // Initialize Generate Button with tracking
+    document.getElementById('generate-btn').addEventListener('click', function() {
+        generateApplication();
+        trackEvent('Application', 'Generate', document.getElementById('template').value);
+    });
     
-    // Initialize Save & Clear Buttons
-    document.getElementById('save-data').addEventListener('click', saveFormData);
-    document.getElementById('clear-data').addEventListener('click', clearFormData);
+    // Initialize Save & Clear Buttons with tracking
+    document.getElementById('save-data').addEventListener('click', function() {
+        saveFormData();
+        trackEvent('Data', 'Save', 'Save Form Data');
+    });
+    document.getElementById('clear-data').addEventListener('click', function() {
+        clearFormData();
+        trackEvent('Data', 'Clear', 'Clear Form Data');
+    });
     
-    // Initialize Print & PDF Buttons
-    document.getElementById('print-btn').addEventListener('click', printApplication);
-    document.getElementById('download-pdf').addEventListener('click', downloadAsPDF);
+    // Initialize Print & PDF Buttons with tracking
+    document.getElementById('print-btn').addEventListener('click', function() {
+        trackEvent('Export', 'Print', 'Print Application');
+        printApplication();
+    });
+    document.getElementById('download-pdf').addEventListener('click', function() {
+        trackEvent('Export', 'PDF', 'Download PDF');
+        downloadAsPDF();
+    });
 });
 
 /**
