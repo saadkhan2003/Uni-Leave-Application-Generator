@@ -2,7 +2,7 @@
  * University Leave Application Generator
  * 
  * This script handles all the functionality for the leave application generator,
- * including form handling, template generation, signature pad, local storage, and event tracking.
+ * including form handling, template generation, signature pad, local storage, event tracking, and Firebase integration.
  */
 
 // Global Variables
@@ -11,6 +11,103 @@ let currentFont = "'Kalam', cursive"; // Default handwriting font (fifth font op
 let currentColor = "#000000"; // Default ink color
 let hasRuledLines = false; // Default paper style - no lines
 let hasAgedEffect = false; // Default paper style - not aged
+let firebase; // Firebase instance
+let activeUserRef; // Reference to active user in Firebase
+let userId; // Unique ID for the current user
+
+/**
+ * Initializes Firebase for real-time user tracking
+ */
+function initFirebase() {
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDEEa4AZxBz4f1ipwn6Uf7vHd48M6ik8fg",
+        authDomain: "leave-application-genera-8efe0.firebaseapp.com",
+        projectId: "leave-application-genera-8efe0",
+        storageBucket: "leave-application-genera-8efe0.firebasestorage.app",
+        messagingSenderId: "834899665855",
+        appId: "1:834899665855:web:354a6defdf20284297f70a",
+        measurementId: "G-LPDQ8DKQCH",
+        databaseURL: "https://leave-application-genera-8efe0-default-rtdb.firebaseio.com"
+    };
+    
+    // Initialize Firebase
+    firebase = Firebase.initializeApp(firebaseConfig);
+    
+    // Generate a unique ID for this user
+    userId = generateUserId();
+    
+    // Get reference to the active users in the database
+    const activeUsersRef = firebase.database().ref('activeUsers');
+    activeUserRef = activeUsersRef.child(userId);
+    
+    // Add this user to active users with their information
+    const userInfo = {
+        timeJoined: new Date().toISOString(),
+        lastActive: new Date().toISOString(),
+        browser: navigator.userAgent,
+        language: navigator.language,
+        screenSize: `${window.screen.width}x${window.screen.height}`,
+        page: window.location.pathname,
+        referrer: document.referrer || 'direct'
+    };
+    
+    // Try to get approximate location
+    try {
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                // Add location data to user info
+                const locationInfo = {
+                    country: data.country_name,
+                    region: data.region,
+                    city: data.city,
+                    timezone: data.timezone
+                };
+                
+                // Update user with location
+                activeUserRef.update({
+                    ...userInfo,
+                    location: locationInfo
+                });
+            })
+            .catch(() => {
+                // If location fetch fails, just save without location
+                activeUserRef.set(userInfo);
+            });
+    } catch (e) {
+        // If fetch isn't available, just save without location
+        activeUserRef.set(userInfo);
+    }
+    
+    // Set up presence detection to remove user when they leave
+    activeUserRef.onDisconnect().remove();
+    
+    // Update last active timestamp every minute
+    setInterval(() => {
+        if (activeUserRef) {
+            activeUserRef.update({
+                lastActive: new Date().toISOString()
+            });
+        }
+    }, 60000);
+}
+
+/**
+ * Generates a unique ID for the user
+ */
+function generateUserId() {
+    // Check for existing ID in localStorage
+    let id = localStorage.getItem('visitorId');
+    
+    if (!id) {
+        // Generate a random ID if none exists
+        id = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('visitorId', id);
+    }
+    
+    return id;
+}
 
 /**
  * Track usage events
@@ -26,10 +123,47 @@ function trackEvent(category, action, label = null) {
         };
         gtag('event', action, eventParams);
     }
+    
+    // Also track to Firebase if available
+    if (firebase) {
+        try {
+            // Add the event to the events collection
+            firebase.database().ref('events').push({
+                category,
+                action,
+                label,
+                userId: userId,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Update statistics
+            if (action === 'Generate') {
+                // Increment apps created counter
+                firebase.database().ref('statistics/appsCreated').transaction(count => {
+                    return (count || 0) + 1;
+                });
+            } else if (action === 'PDF') {
+                // Increment PDFs downloaded counter
+                firebase.database().ref('statistics/pdfsDownloaded').transaction(count => {
+                    return (count || 0) + 1;
+                });
+            }
+        } catch (e) {
+            console.error("Error tracking event to Firebase:", e);
+        }
+    }
 }
 
 // Initialize the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Firebase for real-time user tracking
+    try {
+        initFirebase();
+        console.log("Firebase visitor tracking initialized");
+    } catch (e) {
+        console.error("Error initializing Firebase:", e);
+    }
+    
     // Initialize Tabs
     initTabs();
     
@@ -73,6 +207,9 @@ document.addEventListener('DOMContentLoaded', function() {
         trackEvent('Export', 'PDF', 'Download PDF');
         downloadAsPDF();
     });
+    
+    // Load form data
+    loadFormData();
 });
 
 /**

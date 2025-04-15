@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Application Generator Admin Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        body:has(#login-section:not(.hidden)) {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* Login Section Styles */
+        .login-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            width: 350px;
+            max-width: 90%;
+        }
+
+        .login-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        #login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        #login-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        #active-count {
+            font-size: 3rem;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--secondary-color);
+        }
+        
+        .visitor-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .visitor-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .visitor-item:last-child {
+            border-bottom: none;
+        }
+        
+        .visitor-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .visitor-details h4 {
+            margin-bottom: 5px;
+        }
+        
+        .label {
+            font-weight: bold;
+            display: inline-block;
+            min-width: 100px;
+        }
+        
+        .timestamp {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="login-section" class="login-container">
+        <h2>Admin Dashboard Login</h2>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+        <button id="login-btn">Login</button>
+    </div>
+
+    <!-- Dashboard Section (hidden initially) -->
+    <div id="dashboard-section" class="hidden">
+        <div class="container">
+            <header>
+                <h1>Leave Application Generator Admin Dashboard</h1>
+                <p>Monitor visitor activity in real-time</p>
+            </header>
+            
+            <div class="dashboard">
+                <div class="sidebar">
+                    <div class="card">
+                        <h2>Active Visitors</h2>
+                        <div id="active-count">0</div>
+                        <p style="text-align: center;">Users currently on your site</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>Statistics</h2>
+                        <div class="stat-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="total-today">0</div>
+                                <div class="stat-label">Visitors Today</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="total-apps">0</div>
+                                <div class="stat-label">Applications Created</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="total-pdfs">0</div>
+                                <div class="stat-label">PDFs Downloaded</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="avg-time">0:00</div>
+                                <div class="stat-label">Avg. Time on Site</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="main-content">
+                    <div class="card">
+                        <h2>Current Visitors</h2>
+                        <div id="visitor-list" class="visitor-list">
+                            <!-- Visitor items will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEEa4AZxBz4f1ipwn6Uf7vHd48M6ik8fg",
+            authDomain: "leave-application-genera-8efe0.firebaseapp.com",
+            projectId: "leave-application-genera-8efe0",
+            storageBucket: "leave-application-genera-8efe0.firebasestorage.app",
+            messagingSenderId: "834899665855",
+            appId: "1:834899665855:web:354a6defdf20284297f70a",
+            measurementId: "G-LPDQ8DKQCH",
+            databaseURL: "https://leave-application-genera-8efe0-default-rtdb.firebaseio.com"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Global variables
+        const username = "msaad.official6@gmail.com"; // Change this to your desired admin username
+        const password = "Saad_@123"; // Change this to your desired admin password
+        
+        // DOM Elements
+        const loginSection = document.getElementById('login-section');
+        const dashboardSection = document.getElementById('dashboard-section');
+        const loginBtn = document.getElementById('login-btn');
+        const activeCountEl = document.getElementById('active-count');
+        const visitorListEl = document.getElementById('visitor-list');
+        const totalTodayEl = document.getElementById('total-today');
+        const totalAppsEl = document.getElementById('total-apps');
+        const totalPdfsEl = document.getElementById('total-pdfs');
+        const avgTimeEl = document.getElementById('avg-time');
+        
+        // Handle Login
+        loginBtn.addEventListener('click', function() {
+            const enteredUsername = document.getElementById('username').value;
+            const enteredPassword = document.getElementById('password').value;
+            
+            if (enteredUsername === username && enteredPassword === password) {
+                loginSection.classList.add('hidden');
+                dashboardSection.classList.remove('hidden');
+                initDashboard();
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+        });
+        
+        // Initialize Dashboard
+        function initDashboard() {
+            // Listen for active users from Firebase
+            const activeUsersRef = firebase.database().ref('activeUsers');
+            
+            activeUsersRef.on('value', (snapshot) => {
+                // Clear existing visitor list
+                visitorListEl.innerHTML = '';
+                
+                const visitors = snapshot.val() || {};
+                const visitorCount = Object.keys(visitors).length;
+                
+                // Update active count
+                activeCountEl.textContent = visitorCount;
+                
+                // Add each visitor to the list
+                Object.entries(visitors).forEach(([id, data]) => {
+                    addVisitorToList(id, data);
+                });
+                
+                // Update statistics
+                updateStatistics(visitors);
+            });
+        }
+        
+        // Add visitor to list
+        function addVisitorToList(id, data) {
+            const visitorItem = document.createElement('div');
+            visitorItem.className = 'visitor-item';
+            visitorItem.id = `visitor-${id}`;
+            
+            const joinTime = new Date(data.timeJoined).toLocaleTimeString();
+            const timeSinceJoin = getTimeSince(data.timeJoined);
+            const lastActive = getTimeSince(data.lastActive);
+            
+            let locationInfo = 'Unknown Location';
+            if (data.location) {
+                const { country, region, city } = data.location;
+                locationInfo = `${city || ''} ${region ? ', ' + region : ''} ${country ? ', ' + country : ''}`.trim();
+                if (!locationInfo) locationInfo = 'Unknown Location';
+            }
+            
+            visitorItem.innerHTML = `
+                <div class="visitor-details">
+                    <h4>Visitor Details</h4>
+                    <div><span class="label">ID:</span> ${id.substring(0, 8)}...</div>
+                    <div><span class="label">Browser:</span> ${getBrowserInfo(data.browser)}</div>
+                    <div><span class="label">Screen:</span> ${data.screenSize || 'Unknown'}</div>
+                </div>
+                <div class="visitor-details">
+                    <h4>Location</h4>
+                    <div>${locationInfo}</div>
+                    <div><span class="label">Timezone:</span> ${data.location?.timezone || 'Unknown'}</div>
+                    <div><span class="label">Language:</span> ${data.language || 'Unknown'}</div>
+                </div>
+                <div class="visitor-details">
+                    <h4>Activity</h4>
+                    <div><span class="label">Joined:</span> ${joinTime} (${timeSinceJoin} ago)</div>
+                    <div><span class="label">Last active:</span> ${lastActive} ago</div>
+                    <div><span class="label">Referrer:</span> ${data.referrer || 'Direct'}</div>
+                    <div><span class="label">Current page:</span> ${data.page || 'Home'}</div>
+                </div>
+            `;
+            
+            visitorListEl.appendChild(visitorItem);
+        }
+        
+        // Update statistics
+        function updateStatistics(visitors) {
+            // Calculate visitors today
+            const today = new Date().toISOString().split('T')[0];
+            const visitorsToday = Object.values(visitors).filter(visitor => {
+                const joinDate = new Date(visitor.timeJoined).toISOString().split('T')[0];
+                return joinDate === today;
+            }).length;
+            
+            totalTodayEl.textContent = visitorsToday;
+            
+            // Get apps created and PDFs downloaded from Firebase
+            firebase.database().ref('statistics').once('value', (snapshot) => {
+                const stats = snapshot.val() || { appsCreated: 0, pdfsDownloaded: 0 };
+                totalAppsEl.textContent = stats.appsCreated || 0;
+                totalPdfsEl.textContent = stats.pdfsDownloaded || 0;
+            });
+            
+            // Calculate average time on site
+            const visitDurations = Object.values(visitors).map(visitor => {
+                const joined = new Date(visitor.timeJoined).getTime();
+                const lastActive = new Date(visitor.lastActive).getTime();
+                return Math.floor((lastActive - joined) / 1000 / 60); // minutes
+            });
+            
+            if (visitDurations.length > 0) {
+                const totalMinutes = visitDurations.reduce((sum, duration) => sum + duration, 0);
+                const avgMinutes = Math.floor(totalMinutes / visitDurations.length);
+                avgTimeEl.textContent = `${avgMinutes}:00`;
+            } else {
+                avgTimeEl.textContent = "0:00";
+            }
+        }
+        
+        // Helper function to get browser info from user agent
+        function getBrowserInfo(userAgent) {
+            if (!userAgent) return "Unknown";
+            
+            if (userAgent.includes("Firefox")) {
+                return "Firefox";
+            } else if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) {
+                return "Chrome";
+            } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
+                return "Safari";
+            } else if (userAgent.includes("Edg")) {
+                return "Edge";
+            } else if (userAgent.includes("MSIE") || userAgent.includes("Trident/")) {
+                return "Internet Explorer";
+            } else {
+                return "Other";
+            }
+        }
+        
+        // Helper function to get time since a timestamp
+        function getTimeSince(timestamp) {
+            if (!timestamp) return "unknown";
+            
+            const now = new Date().getTime();
+            const then = new Date(timestamp).getTime();
+            const seconds = Math.floor((now - then) / 1000);
+            
+            if (seconds < 60) return `${seconds} seconds`;
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours`;
+            return `${Math.floor(seconds / 86400)} days`;
+        }
+    </script>
+</body>
+</html>
