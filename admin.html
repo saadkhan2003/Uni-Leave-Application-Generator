@@ -313,21 +313,35 @@
         };
         
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase initialization attempted");
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+            alert("Firebase initialization error: " + error.message);
+        }
         
         // Test Firebase Connection
         function testFirebaseConnection() {
             console.log("Testing Firebase connection...");
-            const connectedRef = firebase.database().ref(".info/connected");
-            connectedRef.on("value", (snap) => {
-                if (snap.val() === true) {
-                    console.log("Firebase connected successfully ✅");
-                    alert("Firebase connected successfully! The admin dashboard should work properly.");
-                } else {
-                    console.error("Not connected to Firebase ❌");
-                    alert("Firebase connection failed. Please check your network or Firebase configuration.");
-                }
-            });
+            try {
+                const connectedRef = firebase.database().ref(".info/connected");
+                connectedRef.on("value", (snap) => {
+                    if (snap.val() === true) {
+                        console.log("Firebase connected successfully ✅");
+                        alert("Firebase connected successfully! The admin dashboard should work properly.");
+                    } else {
+                        console.error("Not connected to Firebase ❌");
+                        alert("Firebase connection failed. Please check your network or Firebase configuration.");
+                    }
+                }, (error) => {
+                    console.error("Firebase connection error:", error);
+                    alert("Firebase connection error: " + error.message);
+                });
+            } catch (error) {
+                console.error("Error in Firebase connection test:", error);
+                alert("Error testing Firebase connection: " + error.message);
+            }
         }
         
         // Global variables
