@@ -226,6 +226,9 @@
             <input type="password" id="password" placeholder="Enter your password">
         </div>
         <button id="login-btn">Login</button>
+        <div style="margin-top: 15px; text-align: center;">
+            <button id="test-firebase-btn" style="background-color: #2ecc71; padding: 8px 12px; border: none; border-radius: 4px; color: white; cursor: pointer;">Test Firebase Connection</button>
+        </div>
     </div>
 
     <!-- Dashboard Section (hidden initially) -->
@@ -265,6 +268,18 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="card" style="margin-top: 20px;">
+                        <h2>Firebase Status</h2>
+                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                            <div id="connection-status" style="width: 12px; height: 12px; border-radius: 50%; background-color: #ccc; margin-right: 10px;"></div>
+                            <span id="connection-text">Checking connection...</span>
+                        </div>
+                        <div>
+                            <button id="create-test-data" class="action-btn" style="background-color: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Create Test Data</button>
+                            <button id="remove-test-data" class="action-btn" style="background-color: var(--accent-color); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Remove Test Data</button>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="main-content">
@@ -280,9 +295,9 @@
     </div>
 
     <!-- Firebase scripts -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     
     <script>
         // Firebase configuration
@@ -290,7 +305,7 @@
             apiKey: "AIzaSyDEEa4AZxBz4f1ipwn6Uf7vHd48M6ik8fg",
             authDomain: "leave-application-genera-8efe0.firebaseapp.com",
             projectId: "leave-application-genera-8efe0",
-            storageBucket: "leave-application-genera-8efe0.firebasestorage.app",
+            storageBucket: "leave-application-genera-8efe0.appspot.com",
             messagingSenderId: "834899665855",
             appId: "1:834899665855:web:354a6defdf20284297f70a",
             measurementId: "G-LPDQ8DKQCH",
@@ -300,6 +315,21 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         
+        // Test Firebase Connection
+        function testFirebaseConnection() {
+            console.log("Testing Firebase connection...");
+            const connectedRef = firebase.database().ref(".info/connected");
+            connectedRef.on("value", (snap) => {
+                if (snap.val() === true) {
+                    console.log("Firebase connected successfully ✅");
+                    alert("Firebase connected successfully! The admin dashboard should work properly.");
+                } else {
+                    console.error("Not connected to Firebase ❌");
+                    alert("Firebase connection failed. Please check your network or Firebase configuration.");
+                }
+            });
+        }
+        
         // Global variables
         const username = "msaad.official6@gmail.com"; // Change this to your desired admin username
         const password = "Saad_@123"; // Change this to your desired admin password
@@ -308,12 +338,17 @@
         const loginSection = document.getElementById('login-section');
         const dashboardSection = document.getElementById('dashboard-section');
         const loginBtn = document.getElementById('login-btn');
+        const testFirebaseBtn = document.getElementById('test-firebase-btn');
         const activeCountEl = document.getElementById('active-count');
         const visitorListEl = document.getElementById('visitor-list');
         const totalTodayEl = document.getElementById('total-today');
         const totalAppsEl = document.getElementById('total-apps');
         const totalPdfsEl = document.getElementById('total-pdfs');
         const avgTimeEl = document.getElementById('avg-time');
+        const connectionStatusEl = document.getElementById('connection-status');
+        const connectionTextEl = document.getElementById('connection-text');
+        const createTestDataBtn = document.getElementById('create-test-data');
+        const removeTestDataBtn = document.getElementById('remove-test-data');
         
         // Handle Login
         loginBtn.addEventListener('click', function() {
@@ -328,6 +363,9 @@
                 alert('Invalid username or password. Please try again.');
             }
         });
+
+        // Handle Test Firebase Connection
+        testFirebaseBtn.addEventListener('click', testFirebaseConnection);
         
         // Initialize Dashboard
         function initDashboard() {
@@ -351,6 +389,43 @@
                 
                 // Update statistics
                 updateStatistics(visitors);
+            });
+
+            // Check Firebase connection status
+            const connectedRef = firebase.database().ref(".info/connected");
+            connectedRef.on("value", (snap) => {
+                if (snap.val() === true) {
+                    connectionStatusEl.style.backgroundColor = "#2ecc71";
+                    connectionTextEl.textContent = "Connected";
+                } else {
+                    connectionStatusEl.style.backgroundColor = "#e74c3c";
+                    connectionTextEl.textContent = "Disconnected";
+                }
+            });
+
+            // Handle test data creation
+            createTestDataBtn.addEventListener('click', () => {
+                const testDataRef = firebase.database().ref('testData');
+                testDataRef.set({
+                    sampleKey: "sampleValue",
+                    timestamp: new Date().toISOString()
+                }).then(() => {
+                    alert("Test data created successfully!");
+                }).catch((error) => {
+                    console.error("Error creating test data:", error);
+                    alert("Failed to create test data.");
+                });
+            });
+
+            // Handle test data removal
+            removeTestDataBtn.addEventListener('click', () => {
+                const testDataRef = firebase.database().ref('testData');
+                testDataRef.remove().then(() => {
+                    alert("Test data removed successfully!");
+                }).catch((error) => {
+                    console.error("Error removing test data:", error);
+                    alert("Failed to remove test data.");
+                });
             });
         }
         
