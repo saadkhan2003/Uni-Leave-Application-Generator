@@ -180,9 +180,29 @@ function initSignaturePad() {
         penColor: 'rgb(0, 0, 0)'
     });
     
+    // Initially disable drawing
+    signaturePad.off();
+    
+    // Draw signature button
+    document.getElementById('draw-signature').addEventListener('click', () => {
+        const drawBtn = document.getElementById('draw-signature');
+        if (drawBtn.classList.contains('active')) {
+            // Disable drawing
+            signaturePad.off();
+            drawBtn.classList.remove('active');
+            drawBtn.textContent = 'Draw';
+        } else {
+            // Enable drawing
+            signaturePad.on();
+            drawBtn.classList.add('active');
+            drawBtn.textContent = 'Done';
+        }
+    });
+    
     // Clear signature button
     document.getElementById('clear-signature').addEventListener('click', () => {
         signaturePad.clear();
+        // After clearing, keep the current drawing state
     });
     
     // Upload signature
