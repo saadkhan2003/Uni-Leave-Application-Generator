@@ -513,11 +513,24 @@ function generateApplication() {
     let content = '';
     
     // To section at the top
-    content += `<div class="application-to">
-                    <div>The Head of Department</div>
-                    <div>Department of ${department}</div>
-                    <div>University of Swabi</div>
-                </div>`;
+    if (templateType === 'fullCustom') {
+        // Use custom recipient title, department and university if provided
+        const customHeadTitle = document.getElementById('customHeadTitle').value;
+        const customDepartment = document.getElementById('customDepartment').value;
+        const customUniversity = document.getElementById('customUniversity').value;
+        
+        content += `<div class="application-to">
+                        <div>${customHeadTitle || 'The Head of Department'}</div>
+                        <div>Department of ${customDepartment || department}</div>
+                        <div>${customUniversity || 'University of Swabi'}</div>
+                    </div>`;
+    } else {
+        content += `<div class="application-to">
+                        <div>The Head of Department</div>
+                        <div>Department of ${department}</div>
+                        <div>University of Swabi</div>
+                    </div>`;
+    }
     
     // Subject line
     let subject = '';
@@ -681,6 +694,8 @@ function saveFormData() {
         case 'fullCustom':
             formData.fullCustomText = document.getElementById('fullCustomText').value;
             formData.customSubject = document.getElementById('customSubject').value;
+            formData.customDepartment = document.getElementById('customDepartment').value;
+            formData.customUniversity = document.getElementById('customUniversity').value;
             break;
     }
     
@@ -746,6 +761,8 @@ function loadFormData() {
             case 'fullCustom':
                 document.getElementById('fullCustomText').value = formData.fullCustomText || '';
                 document.getElementById('customSubject').value = formData.customSubject || '';
+                document.getElementById('customDepartment').value = formData.customDepartment || '';
+                document.getElementById('customUniversity').value = formData.customUniversity || '';
                 break;
         }
         
