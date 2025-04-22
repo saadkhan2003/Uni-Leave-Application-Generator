@@ -295,9 +295,9 @@
     </div>
 
     <!-- Firebase scripts -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     
     <script>
         // Firebase configuration
@@ -305,7 +305,7 @@
             apiKey: "AIzaSyDEEa4AZxBz4f1ipwn6Uf7vHd48M6ik8fg",
             authDomain: "leave-application-genera-8efe0.firebaseapp.com",
             projectId: "leave-application-genera-8efe0",
-            storageBucket: "leave-application-genera-8efe0.appspot.com",
+            storageBucket: "leave-application-genera-8efe0.firebasestorage.app",
             messagingSenderId: "834899665855",
             appId: "1:834899665855:web:354a6defdf20284297f70a",
             measurementId: "G-LPDQ8DKQCH",
@@ -313,35 +313,21 @@
         };
         
         // Initialize Firebase
-        try {
-            firebase.initializeApp(firebaseConfig);
-            console.log("Firebase initialization attempted");
-        } catch (error) {
-            console.error("Firebase initialization error:", error);
-            alert("Firebase initialization error: " + error.message);
-        }
+        firebase.initializeApp(firebaseConfig);
         
         // Test Firebase Connection
         function testFirebaseConnection() {
             console.log("Testing Firebase connection...");
-            try {
-                const connectedRef = firebase.database().ref(".info/connected");
-                connectedRef.on("value", (snap) => {
-                    if (snap.val() === true) {
-                        console.log("Firebase connected successfully ✅");
-                        alert("Firebase connected successfully! The admin dashboard should work properly.");
-                    } else {
-                        console.error("Not connected to Firebase ❌");
-                        alert("Firebase connection failed. Please check your network or Firebase configuration.");
-                    }
-                }, (error) => {
-                    console.error("Firebase connection error:", error);
-                    alert("Firebase connection error: " + error.message);
-                });
-            } catch (error) {
-                console.error("Error in Firebase connection test:", error);
-                alert("Error testing Firebase connection: " + error.message);
-            }
+            const connectedRef = firebase.database().ref(".info/connected");
+            connectedRef.on("value", (snap) => {
+                if (snap.val() === true) {
+                    console.log("Firebase connected successfully ✅");
+                    alert("Firebase connected successfully! The admin dashboard should work properly.");
+                } else {
+                    console.error("Not connected to Firebase ❌");
+                    alert("Firebase connection failed. Please check your network or Firebase configuration.");
+                }
+            });
         }
         
         // Global variables

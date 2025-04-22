@@ -32,7 +32,7 @@ function initFirebase() {
     };
     
     // Initialize Firebase
-    firebase = firebase.initializeApp(firebaseConfig);
+    firebase = Firebase.initializeApp(firebaseConfig);
     
     // Generate a unique ID for this user
     userId = generateUserId();
@@ -162,35 +162,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Firebase visitor tracking initialized");
     } catch (e) {
         console.error("Error initializing Firebase:", e);
-        
-        // Show user-friendly error message
-        const errorMessage = document.createElement('div');
-        errorMessage.className = 'alert alert-warning';
-        errorMessage.style.position = 'fixed';
-        errorMessage.style.top = '10px';
-        errorMessage.style.right = '10px';
-        errorMessage.style.zIndex = '9999';
-        errorMessage.style.padding = '10px 15px';
-        errorMessage.style.borderRadius = '4px';
-        errorMessage.style.backgroundColor = '#fff3cd';
-        errorMessage.style.border = '1px solid #ffeeba';
-        errorMessage.style.color = '#856404';
-        
-        
-        // Try to reconnect after a delay
-        setTimeout(() => {
-            try {
-                initFirebase();
-                console.log("Firebase reconnected successfully");
-                errorMessage.remove();
-            } catch (reconnectError) {
-                console.error("Firebase reconnection failed:", reconnectError);
-                
-                // Auto-remove the message after 8 seconds
-                setTimeout(() => errorMessage.remove(), 8000);
-            }
-            // sadadasdas
-        }, 3000);
     }
     
     // Initialize Tabs
